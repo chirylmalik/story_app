@@ -70,14 +70,14 @@ class MainViewModelTest {
         // Mock dataStore
         `when`(context.dataStore).thenReturn(dataStore)
 
-        val userPreference = UserPreference.getInstance(dataStore) // Gunakan dataStore langsung
+        val userPreference = UserPreference.getInstance(dataStore)
         mainViewModel = MainViewModel(userPreference, apiService)
     }
 
     @Test
     fun `when Get Story Should Not Null and Return Data`() = runTest {
         // Create a dummy response (replace this with your actual data generation)
-        val dummyStories = DataDummy.generateDummyStoryResponse() // Dummy response
+        val dummyStories = DataDummy.generateDummyStoryResponse()
         val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStories)
 
         val expectedStories = MutableLiveData<PagingData<ListStoryItem>>()
