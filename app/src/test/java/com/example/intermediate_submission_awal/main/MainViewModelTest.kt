@@ -80,6 +80,9 @@ class MainViewModelTest {
         val dummyStories = DataDummy.generateDummyStoryResponse() // Dummy response
         val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStories)
 
+        val expectedStories = MutableLiveData<PagingData<ListStoryItem>>()
+        expectedStories.value = data
+
         // Mock the api call (simulating the API response)
         `when`(apiService.getStories(anyString(), anyInt(), anyInt()))
             .thenReturn(StoryResponse(listStory = dummyStories, error = false, message = "Success"))
