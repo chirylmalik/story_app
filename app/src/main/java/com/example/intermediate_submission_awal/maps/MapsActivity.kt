@@ -67,7 +67,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             addMarker(stories)
         }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -82,20 +81,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isMapToolbarEnabled = true
     }
 
-    data class TourismPlace(
-        val name: String,
-        val latitude: Double,
-        val longitude: Double
-    )
-
     private fun addMarker(stories: List<ListStoryItem>) {
         mMap.clear()
 
-        // Ensure bounds are reset
         boundsBuilder = LatLngBounds.Builder()
 
         stories.forEach { story ->
-            // Check if story has valid latitude and longitude
             val lat = story.lat
             val lon = story.lon
 
@@ -105,13 +96,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     MarkerOptions()
                         .position(latLng)
                         .title(story.name)
-                        .snippet(story.description) // Assuming 'description' is part of the API data
+                        .snippet(story.description)
                 )
                 boundsBuilder.include(latLng)
             }
         }
 
-        // If there are markers, adjust the camera to fit all of them
         val bounds: LatLngBounds = boundsBuilder.build()
         if (::mMap.isInitialized) {
             mMap.animateCamera(
