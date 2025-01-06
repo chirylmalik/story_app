@@ -4,15 +4,12 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.recyclerview.widget.ListUpdateCallback
-import androidx.test.core.app.ApplicationProvider
 import com.example.intermediate_submission_awal.DataDummy
 import com.example.intermediate_submission_awal.MainDispatcherRule
 import com.example.intermediate_submission_awal.data.UserPreference
@@ -27,7 +24,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,12 +31,9 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.concurrent.CountDownLatch
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -67,27 +60,18 @@ class MainViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
 
-        // Mock dataStore
-        `when`(context.dataStore).thenReturn(dataStore)
-
         val userPreference = UserPreference.getInstance(dataStore)
         mainViewModel = MainViewModel(userPreference, apiService)
     }
 
     @Test
     fun `when Get Story Should Not Null and Return Data`() = runTest {
-        // Create a dummy response (replace this with your actual data generation)
         val dummyStories = DataDummy.generateDummyStoryResponse()
         val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStories)
 
-        val expectedStories = MutableLiveData<PagingData<ListStoryItem>>()
-        expectedStories.value = data
-
-        // Mock the api call (simulating the API response)
         `when`(apiService.getStories(anyString(), anyInt(), anyInt()))
             .thenReturn(StoryResponse(listStory = dummyStories, error = false, message = "Success"))
 
-        // Collect data from ViewModel
         val actualStories: PagingData<ListStoryItem> = mainViewModel.getListStory("Bearer dummy_token").getOrAwaitValue()
 
         val differ = AsyncPagingDataDiffer(
@@ -97,7 +81,6 @@ class MainViewModelTest {
         )
         differ.submitData(actualStories)
 
-        // Assert the results
         Assert.assertNotNull(differ.snapshot())
         Assert.assertEquals(dummyStories.size, differ.snapshot().size)
         Assert.assertEquals(dummyStories[0], differ.snapshot()[0])
@@ -110,14 +93,12 @@ class MainViewModelTest {
         val expectedStories = MutableLiveData<PagingData<ListStoryItem>>()
         expectedStories.value = data
 
-        `when`(apiService.getStories(any(), any(), any()))
+        `when`(apiService.getStories(anyString(), anyInt(), anyInt()))
             .thenReturn(StoryResponse(listStory = emptyList(), error = false, message = "No stories"))
 
-        // Initialize ViewModel without using a repository
         val userPreference = UserPreference.getInstance(context.dataStore)
         mainViewModel = MainViewModel(userPreference, apiService)
 
-        // Collect data from ViewModel
         val actualStories: PagingData<ListStoryItem> = mainViewModel.getListStory("Bearer dummy_token").getOrAwaitValue()
 
         val differ = AsyncPagingDataDiffer(
@@ -127,7 +108,6 @@ class MainViewModelTest {
         )
         differ.submitData(actualStories)
 
-        // Assert the results
         Assert.assertEquals(0, differ.snapshot().size)
     }
 }
