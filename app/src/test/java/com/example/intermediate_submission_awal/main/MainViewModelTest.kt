@@ -3,6 +3,7 @@ package com.example.intermediate_submission_awal.main
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.AsyncPagingDataDiffer
@@ -34,6 +35,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.File
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -48,19 +50,18 @@ class MainViewModelTest {
     @Mock
     private lateinit var apiService: ApiService
 
-    @Mock
-    private lateinit var context: Context
-
     private lateinit var mainViewModel: MainViewModel
-
-    @Mock
-    private lateinit var dataStore: DataStore<Preferences>
+    private lateinit var fakeDataStore: DataStore<Preferences>
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
 
-        val userPreference = UserPreference.getInstance(dataStore)
+        fakeDataStore = PreferenceDataStoreFactory.create {
+            File("test_datastore.preferences_pb").apply { deleteOnExit() }
+        }
+
+        val userPreference = UserPreference.getInstance(fakeDataStore)
         mainViewModel = MainViewModel(userPreference, apiService)
     }
 
@@ -90,14 +91,8 @@ class MainViewModelTest {
     fun `when Get Story Empty Should Return No Data`() = runTest {
         val data: PagingData<ListStoryItem> = PagingData.from(emptyList())
 
-        val expectedStories = MutableLiveData<PagingData<ListStoryItem>>()
-        expectedStories.value = data
-
         `when`(apiService.getStories(anyString(), anyInt(), anyInt()))
             .thenReturn(StoryResponse(listStory = emptyList(), error = false, message = "No stories"))
-
-        val userPreference = UserPreference.getInstance(context.dataStore)
-        mainViewModel = MainViewModel(userPreference, apiService)
 
         val actualStories: PagingData<ListStoryItem> = mainViewModel.getListStory("Bearer dummy_token").getOrAwaitValue()
 
