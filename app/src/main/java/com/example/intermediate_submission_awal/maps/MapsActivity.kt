@@ -13,6 +13,7 @@ import com.example.intermediate_submission_awal.ViewModelFactory
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiConfig
 import com.example.intermediate_submission_awal.data.dataStore
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.data.response.ListStoryItem
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -44,9 +45,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         userPreference = UserPreference.getInstance(dataStore)
 
+        val apiService = ApiConfig.getApiService()
+        val repository = StoryRepository(apiService)
+
         val factory = ViewModelFactory(
             UserPreference.getInstance(dataStore),
-            ApiConfig.getApiService()
+            apiService,
+            repository
         )
 
         mapsViewModel = ViewModelProvider(this, factory)[MapsViewModel::class.java]

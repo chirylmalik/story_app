@@ -27,6 +27,7 @@ import com.example.intermediate_submission_awal.R
 import com.example.intermediate_submission_awal.ViewModelFactory
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiConfig
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.login.LoginActivity
 import com.example.intermediate_submission_awal.databinding.ActivitySignupBinding
 
@@ -92,9 +93,13 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
+        val apiService = ApiConfig.getApiService()
+        val repository = StoryRepository(apiService)
+
         val factory = ViewModelFactory(
             UserPreference.getInstance(dataStore),
-            ApiConfig.getApiService()
+            apiService,
+            repository
         )
         signupViewModel = ViewModelProvider(this, factory)[SignupViewModel::class.java]
 

@@ -27,6 +27,7 @@ import com.example.intermediate_submission_awal.login.LoginViewModel
 import com.example.intermediate_submission_awal.data.response.ListStoryItem
 import com.example.intermediate_submission_awal.addstory.AddNewStoryActivity
 import com.example.intermediate_submission_awal.data.api.ApiConfig
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.databinding.ItemLoadingBinding
 import com.example.intermediate_submission_awal.maps.MapsActivity
 import kotlinx.coroutines.launch
@@ -58,9 +59,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
+        val apiService = ApiConfig.getApiService()
+        val repository = StoryRepository(apiService)
+
         val factory = ViewModelFactory(
             UserPreference.getInstance(dataStore),
-            ApiConfig.getApiService()
+            apiService,
+            repository
         )
         mainViewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 

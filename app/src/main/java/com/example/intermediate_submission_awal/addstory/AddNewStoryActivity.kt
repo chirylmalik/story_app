@@ -20,6 +20,7 @@ import com.example.intermediate_submission_awal.createMultipartBodyPart
 import com.example.intermediate_submission_awal.createRequestBody
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiConfig
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.databinding.ActivityAddNewStoryBinding
 import com.example.intermediate_submission_awal.login.LoginViewModel
 import com.example.intermediate_submission_awal.main.MainActivity
@@ -48,9 +49,13 @@ class AddNewStoryActivity : AppCompatActivity() {
     private fun setupUI() {
         supportActionBar?.title = getString(R.string.add_story)
 
+        val apiService = ApiConfig.getApiService()
+        val repository = StoryRepository(apiService)
+
         val factory = ViewModelFactory(
             UserPreference.getInstance(dataStore),
-            ApiConfig.getApiService()
+            apiService,
+            repository
         )
 
         mainViewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]

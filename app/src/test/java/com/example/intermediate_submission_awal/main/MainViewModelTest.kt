@@ -16,6 +16,7 @@ import com.example.intermediate_submission_awal.MainDispatcherRule
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiService
 import com.example.intermediate_submission_awal.data.dataStore
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.data.response.ListStoryItem
 import com.example.intermediate_submission_awal.data.response.StoryResponse
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +63,8 @@ class MainViewModelTest {
         }
 
         val userPreference = UserPreference.getInstance(fakeDataStore)
-        mainViewModel = MainViewModel(userPreference, apiService)
+        val storyRepository = StoryRepository(apiService)
+        mainViewModel = MainViewModel(userPreference, storyRepository)
     }
 
     @Test

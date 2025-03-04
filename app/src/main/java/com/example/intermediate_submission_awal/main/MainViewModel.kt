@@ -13,6 +13,7 @@ import com.example.intermediate_submission_awal.data.StoryPagingSource
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiConfig
 import com.example.intermediate_submission_awal.data.api.ApiService
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 import com.example.intermediate_submission_awal.data.response.AddStoryResponse
 import com.example.intermediate_submission_awal.data.response.ListStoryItem
 import com.example.intermediate_submission_awal.data.response.StoryResponse
@@ -24,7 +25,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel(private val pref: UserPreference, private val apiService: ApiService) : ViewModel() {
+class MainViewModel(private val pref: UserPreference, private val repository: StoryRepository) : ViewModel() {
 
     private val _storyList = MutableLiveData<List<ListStoryItem>>()
     val storyList: LiveData<List<ListStoryItem>> = _storyList
@@ -65,13 +66,7 @@ class MainViewModel(private val pref: UserPreference, private val apiService: Ap
     }
 
     fun getListStory(token: String): Flow<PagingData<ListStoryItem>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { StoryPagingSource(apiService, token) }
-        ).flow.cachedIn(viewModelScope)
+        return repository.getStories(token).cachedIn(viewModelScope)
     }
 
     private fun handleGetListStoryResponse(response: Response<StoryResponse>) {

@@ -30,6 +30,7 @@ import com.example.intermediate_submission_awal.main.MainActivity
 import com.example.intermediate_submission_awal.signup.SignupActivity
 import com.example.intermediate_submission_awal.data.UserPreference
 import com.example.intermediate_submission_awal.data.api.ApiConfig
+import com.example.intermediate_submission_awal.data.repository.StoryRepository
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "User")
 
@@ -88,9 +89,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
+        val apiService = ApiConfig.getApiService()
+        val repository = StoryRepository(apiService)
+
         val factory = ViewModelFactory(
             UserPreference.getInstance(dataStore),
-            ApiConfig.getApiService()
+            apiService,
+            repository
         )
 
         loginViewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
