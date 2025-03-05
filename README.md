@@ -1,4 +1,4 @@
-# 📖 Story App
+# Story App
 
 Android app that allows users upload and view stories. Additionally, stories that include location data can be viewed on a map.
 
