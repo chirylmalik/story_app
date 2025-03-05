@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "intermediate_submission_awal"
+rootProject.name = "StoryApp"
 include(":app")
  
